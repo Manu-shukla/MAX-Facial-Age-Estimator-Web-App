@@ -140,6 +140,34 @@ def gen():
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
         else:
             continue
+            
+            #wavelet quantization of the image for feature enhancement. 
+            
+ def quantize(self, in_img, thres_percentile):
+        sgn_mat = self._create_sgn_mat(in_img)
+        abs_img = np.abs(in_img)
+        max_val = abs_img.max()+1e-7
+        prev_bin_maxs, bin_reps = self._create_bins(abs_img, thres_percentile)
+        curr_bin_maxs = self._calc_bin_max(bin_reps, prev_bin_maxs[0,0],max_val)
+        diff = prev_bin_maxs-curr_bin_maxs
+        cond = 1
+        while(cond>lloyd_max_quantizer.CONVERGE_THRES):
+            prev_bin_maxs = curr_bin_maxs
+            bin_reps = self._calc_bin_rep(abs_img, curr_bin_maxs)
+            curr_bin_maxs = self._calc_bin_max(bin_reps,prev_bin_maxs[0,0],max_val)
+            diff = prev_bin_maxs - curr_bin_maxs
+            cond = np.linalg.norm(diff)
+
+        quantized = np.empty(in_img.shape, dtype=np.uint32)
+        for p_idx, val in enumerate(abs_img.flatten()):
+            bin_choose = -1
+            for b_idx, bin_bound in enumerate(curr_bin_maxs):
+                if val < bin_bound:
+                    bin_choose = b_idx
+                    break
+
+            else:
+                bin_choose = len(curr_bin_maxs)-1
 
 
 if __name__ == "__main__":
