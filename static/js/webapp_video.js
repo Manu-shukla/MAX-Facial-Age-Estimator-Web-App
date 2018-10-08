@@ -23,11 +23,11 @@ exports.URL = exports.URL || exports.webkitURL;
 
 initEvents();
 exports.$ = $;
-var ORIGINAL_DOC_TITLE = document.title;
-var mycanvas = document.createElement('canvas');
-var video = $('video');
-var rafId = null;
-var setInt = null;
+var ORIGINAL_DOC_TITLE = document.title,
+ mycanvas = document.createElement('canvas'),
+ video = $('video'),
+ rafId = null,
+ setInt = null;
 
 namespace = '/streaming';
 console.log('http://' + document.domain + ':' + location.port + namespace);
@@ -46,7 +46,7 @@ function initEvents() {
 
 
 function WebcamON(e) {
-  video.height = 240;
+  video.height = 260;
   video.width = 320;
   navigator.getUserMedia({video: true, audio: false}, function(stream) {
     video.src = window.URL.createObjectURL(stream);
@@ -64,7 +64,7 @@ function WebcamON(e) {
     ctx.drawImage(video, 0, 0, mycanvas.width, mycanvas.height);
     socket.emit('streamingvideo', { data: mycanvas.toDataURL('image/jpeg', 0.9) });
   };
-  setInt = setInterval(function(){sendVideoFrame_()}, 1500 / 10);
+  setInt = setInterval(function(){sendVideoFrame_()}, 1600 / 12);
   video.style.display="none";
 //  $('#webcame').style.display="none"
 };
